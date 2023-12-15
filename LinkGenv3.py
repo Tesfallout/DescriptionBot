@@ -132,6 +132,17 @@ else: # starting from scratch, create data
             pass
     except Exception as e:
         pass
+    
+## Create redundant backups ##
+    
+if os.path.exists('anime_data.bak4'):
+    shutil.copy('anime_data.bak4', 'anime_data.bak5')
+if os.path.exists('anime_data.bak3'):
+    shutil.copy('anime_data.bak3', 'anime_data.bak4')
+if os.path.exists('anime_data.bak2'):
+    shutil.copy('anime_data.bak2', 'anime_data.bak3')
+if os.path.exists('anime_data.bak'):
+    shutil.copy('anime_data.bak', 'anime_data.bak2')
 
 try:
     os.remove('anime_data_old.csv')
