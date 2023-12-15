@@ -119,16 +119,20 @@ lastUrl = "https://aniwave.to/filter?keyword=&country%5B%5D=120822&season%5B%5D=
 
 if os.path.exists('anime_data.csv') and not os.path.exists('anime_data.bak'): # data is there, backup missing, backup data
     shutil.copy('anime_data.csv', 'anime_data.bak')
+    print("Debug 01")
     
 elif not os.path.exists('anime_data.csv') and os.path.exists('anime_data.bak'): # data gone, restore from backup
     shutil.copy('anime_data.bak', 'anime_data.csv')
+    print("Debug 02")
 
 elif not os.path.exists('anime_data.csv') and os.path.exists('anime_data_old.csv'): # data gone, backup gone, restore from old, create backup
     shutil.copy('anime_data_old.csv', 'anime_data.csv')
     shutil.copy('anime_data.csv', 'anime_data.bak')
-else: # starting from scratch, create data
+    print("Debug 03")
+elif not os.path.exists('anime_data.csv') and not os.path.exists('anime_data.bak'): # starting from scratch, create data
     try:
         with open('anime_data.csv', 'w'):
+            print("Debug 04")
             pass
     except Exception as e:
         pass
