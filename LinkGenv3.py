@@ -47,17 +47,6 @@ def get_last_season(season, year):
 
     return last_season, last_season_year
 
-def rename_file(old_name, new_name):
-    try:
-        os.rename(old_name, new_name)
-        #print(f"File '{old_name}' has been renamed to '{new_name}'.")
-    except FileNotFoundError:
-        pass
-        #print(f"File '{old_name}' not found.")
-    except PermissionError:
-        pass
-        #print(f"Permission error. Unable to rename file.")
-
 def get_html_content(url):
     response = requests.get(url)
     if response.status_code == 200:
@@ -143,21 +132,20 @@ if __name__ == "__main__":
         os.remove('anime_data_new.csv')
     except OSError as e:
         pass
-        #print(f"Error deleting file: {e}")
 
     if not os.path.exists('anime_data.csv'):
         try:
             with open('anime_data.csv', 'w'):
                 pass
-            #print(f"File anime_data.csv created.")
         except Exception as e:
             pass
-            #print(f"Error creating file: {e}")
 
-        
-    start_file_name = 'anime_data.csv'
-    end_file_name = 'anime_data_old.csv'   
-    rename_file(start_file_name, end_file_name)
+    try:
+        os.rename('anime_data.csv', 'anime_data_old.csv')
+    except FileNotFoundError:
+        pass
+    except PermissionError:
+        pass
     
 ####Get Current Season
     show_info_table = []
