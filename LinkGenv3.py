@@ -266,8 +266,9 @@ if __name__ == "__main__":
                 elif aired == airing:
                     if watched.isdigit() and not watched > 0:
                         skip = True
-            elif season.split('-')[0] != last_season and not watched.isdigit():
-                skip = True
+            elif season.split('-')[0] != last_season:
+                if not watched.isdigit() or watched == aired:
+                    skip = True
 
 
             if skip == False:
