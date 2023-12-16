@@ -210,13 +210,13 @@ async def watch(ctx, *args):
             for x in range(len(title)): #for each item
                 output_list.append(str(info[0][x]) +","+ str(info[1][x]) +","+ str(info[2][x]) +","+ str(info[3][x]) +","+ str(info[4][x]) +","+ str(info[5][x]) +","+ str(info[6][x]))
 
-                rows = []
-                with open('anime_data.csv', 'w', newline='') as file:
-                    csv_writer = csv.writer(file, delimiter=',')
-                    output_list.sort(key=lambda x: x.lower())
-                    for row in output_list:
-                        rows = row.split(',')
-                        csv_writer.writerow(rows)
+            rows = []
+            with open('anime_data.csv', 'w', newline='') as file:
+                csv_writer = csv.writer(file, delimiter=',')
+                output_list.sort(key=lambda x: x.lower())
+                for row in output_list:
+                    rows = row.split(',')
+                    csv_writer.writerow(rows)
 
 @bot.command()
 async def fact(ctx, *args):
