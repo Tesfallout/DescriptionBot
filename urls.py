@@ -20,7 +20,7 @@ with open('anime_data.csv', 'r', newline='') as csv_file:
         if watched[x] != "D" and watched[x].isdigit():
             print("\n" + title[x] + ": " + comment[x])
             for i in range(int(aired[x])-int(watched[x])):
-                print("<https://aniwave.to/" + url[x] + "/ep-" + str(i+1+int(watched[x])) + ">")
+                print("<https://aniwave.to" + url[x] + "/ep-" + str(i+1+int(watched[x])) + ">")
             
 
     
