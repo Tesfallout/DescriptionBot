@@ -69,7 +69,7 @@ def extract_show_info(html_content,season,year):
         if a_tag:
             data_jp = a_tag.get('data-jp', '').strip()
             if data_jp:  # Skip if data-jp is an empty string
-                show_info['data-jp'] = data_jp
+                show_info['data-jp'] = data_jp.replace(",","") #Removes commas in titles of shows
             else:
                 show_info['data-jp'] = 'N/A'
         
@@ -98,15 +98,6 @@ def extract_show_info(html_content,season,year):
 
     return temp_info_table
 
-def export_to_csv(data, filename='anime_data_new.csv'):
-    sorted_data = sorted(data, key=lambda x: x['data-jp'])
-
-    with open(filename, 'w', newline='', encoding='utf-8') as csvfile:
-        fieldnames = ['data-jp', 'ep-status sub', 'ep-status total', 'watched_placeholder', 'comment_placeholder', 'href', 'season']
-        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-        
-        for row in sorted_data:
-            writer.writerow(row)
 
 ###### Main ######
     
@@ -119,20 +110,20 @@ lastUrl = "https://aniwave.to/filter?keyword=&country%5B%5D=120822&season%5B%5D=
 
 if os.path.exists('anime_data.csv') and not os.path.exists('anime_data.bak'): # data is there, backup missing, backup data
     shutil.copy('anime_data.csv', 'anime_data.bak')
-    print("Debug 01")
+    print("Debug: data is there, backup missing, backup data")
     
 elif not os.path.exists('anime_data.csv') and os.path.exists('anime_data.bak'): # data gone, restore from backup
     shutil.copy('anime_data.bak', 'anime_data.csv')
-    print("Debug 02")
+    print("Debug: data gone, restore from backup")
 
 elif not os.path.exists('anime_data.csv') and os.path.exists('anime_data_old.csv'): # data gone, backup gone, restore from old, create backup
     shutil.copy('anime_data_old.csv', 'anime_data.csv')
     shutil.copy('anime_data.csv', 'anime_data.bak')
-    print("Debug 03")
+    print("Debug: data gone, backup gone, restore from old, create backup")
 elif not os.path.exists('anime_data.csv') and not os.path.exists('anime_data.bak'): # starting from scratch, create data
     try:
         with open('anime_data.csv', 'w'):
-            print("Debug 04")
+            print("Debug: starting from scratch, create data")
             pass
     except Exception as e:
         pass
@@ -157,10 +148,12 @@ except OSError as e:
 #### Rename Data to Old ####
 
 try:
-    os.rename('anime_data.csv', 'anime_data_old.csv')
+    shutil.move('anime_data.csv', 'anime_data_old.csv')
 except FileNotFoundError:
+    print("Debug: FileNotFoundError with anime_data.csv")
     pass
 except PermissionError:
+    print("Debug: PermissionError with anime_data.csv")
     pass
     
 #### Get Current Season ####
@@ -217,7 +210,14 @@ if html_content:
         show_info_table += extract_show_info(html_content,last_season,last_season_year) # add previous season page 2+ info to table
             
 if show_info_table:
-    export_to_csv(show_info_table)
+    sorted_data = sorted(show_info_table, key=lambda x: x['data-jp'])
+    with open('anime_data_new.csv', 'w', newline='', encoding='utf-8') as csvfile:
+        fieldnames = ['data-jp', 'ep-status sub', 'ep-status total', 'watched_placeholder', 'comment_placeholder', 'href', 'season']
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+        
+        for row in sorted_data:
+            writer.writerow(row)
+    
 
 #### Data Combining ####
 
@@ -253,8 +253,11 @@ with open('anime_data_old.csv', 'r', newline='') as csv_old:
         watched = str(row).split(',')[-4][2:-1]
         season = str(row).split(',')[-1][2:-2]
 
+        #print(f"Debug: row = {row}")
+
         if "N/A" in row: # conditions to omit a line from the old file
             skip = True
+            
         if season.split('-')[0] == current_season:
             skip == False
         elif season.split('-')[0] == last_season:
@@ -265,6 +268,10 @@ with open('anime_data_old.csv', 'r', newline='') as csv_old:
                     skip = True
         elif season.split('-')[0] != last_season:
             if not watched.isdigit() or watched == aired:
+                skip = True
+
+        if "-E" in str(row):
+            if airing.split('-')[1] == "E" and watched == "D":
                 skip = True
 
         if skip == False:
@@ -304,14 +311,8 @@ with open('anime_data_old.csv', 'r', newline='') as csv_old:
             else:
                 skip = True
 
-            if skip == False:  
-                temp = len(str(row).split(',')) # handles extra commas in the show title
-                if temp == 7:
-                    new_title.append((str(row).split(',')[-7])[2:-1].replace("Ã—","x")) # title
-                elif temp == 8:
-                    new_title.append((str(row).split(',')[-8] + str(row).split(',')[-7])[2:-1].replace("Ã—","x"))
-                elif temp == 9:
-                    new_title.append((str(row).split(',')[-9] + str(row).split(',')[-8] + str(row).split(',')[-6])[2:-1].replace("Ã—","x"))
+            if skip == False:                  
+                new_title.append((str(row).split(',')[-7])[2:-1].replace("Ã—","x")) # title
                 new_aired.append(aired)                             # aired
                 new_airing.append(airing)                           # airing
                 new_watched.append(watched)                         # watched
@@ -327,7 +328,10 @@ with open('anime_data_old.csv', 'r', newline='') as csv_old:
 
         for x in range(len(old_info[0])):           # for each title in old
             if not old_info[0][x] in new_info[0]:   # if the title is not in new_info
-                output_list.append(str(old_info[0][x]) +","+ str(old_info[1][x]) +","+ str(old_info[2][x]) +","+ str(old_info[3][x]) +","+ str(old_info[4][x]) +","+ str(old_info[5][x]) +","+ str(old_info[6][x]))
+                if "-E" in str(old_info[2][x]):
+                    output_list.append(str(old_info[0][x]) +","+ str(old_info[1][x]) +","+ str(old_info[2][x]) +","+ str(old_info[3][x]) +","+ str(old_info[4][x]) +","+ str(old_info[5][x]) +","+ str(old_info[6][x]))
+                else:
+                    output_list.append(str(old_info[0][x]) +","+ str(old_info[1][x]) +","+ str(old_info[2][x]) +"-E,"+ str(old_info[3][x]) +","+ str(old_info[4][x]) +","+ str(old_info[5][x]) +","+ str(old_info[6][x]))
 
         for x in range(len(old_info[0])):           # if the titles are in both files
             if old_info[0][x] in new_info[0]:
