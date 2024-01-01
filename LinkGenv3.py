@@ -15,7 +15,7 @@ def get_anime_season():
 
     if 1<= month <= 3:
         season = 'winter'
-    if 4 <= month <= 6:
+    elif 4 <= month <= 6:
         season = 'spring'
     elif 7 <= month <= 9:
         season = 'summer'
@@ -166,8 +166,8 @@ if html_content:
     page_numbers = re.findall(r'page=\d+', soup.prettify())
     show_info_table = extract_show_info(html_content,current_season,current_year) # add page 1 info to table
 
+    totalPages = 1
     if page_numbers: # Find how many pages there are
-        totalPages = 1
         for page_number in page_numbers:
             pageInt = int(page_number.split('=')[1])
             if pageInt > totalPages:
@@ -264,8 +264,9 @@ with open('anime_data_old.csv', 'r', newline='') as csv_old:
             if aired == airing and watched == "D":
                 skip = True
             elif aired == airing:
-                if watched.isdigit() and not watched > 0:
-                    skip = True
+                if watched.isdigit():
+                    if not int(watched) > 0: #on a separate line to avoid typing mismatch with watched variable
+                        skip = True
         elif season.split('-')[0] != last_season:
             if not watched.isdigit() or watched == aired:
                 skip = True
