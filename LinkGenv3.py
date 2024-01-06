@@ -8,6 +8,8 @@ import time
 
 from bs4 import BeautifulSoup
 
+debug = False
+
 def get_anime_season():
     now = datetime.datetime.now()
     month = now.month
@@ -174,8 +176,10 @@ if html_content:
                 totalPages = pageInt
 
     pageUrl = baseUrl
+    if debug == True:print(f"pageUrl : {pageUrl}")
     currentPage = 1
     while totalPages > currentPage:
+        if debug == True:print(f"currentPage: {currentPage}")
         pageUrl = baseUrl + "&page=" + str(currentPage + 1)
         currentPage += 1
         html_content = get_html_content(pageUrl)
@@ -208,6 +212,8 @@ if html_content:
         soup = BeautifulSoup(html_content, 'html.parser')
             
         show_info_table += extract_show_info(html_content,last_season,last_season_year) # add previous season page 2+ info to table
+
+    if debug == True:print(show_info_table)
             
 if show_info_table:
     sorted_data = sorted(show_info_table, key=lambda x: x['data-jp'])
@@ -253,7 +259,7 @@ with open('anime_data_old.csv', 'r', newline='') as csv_old:
         watched = str(row).split(',')[-4][2:-1]
         season = str(row).split(',')[-1][2:-2]
 
-        #print(f"Debug: row = {row}")
+        if debug == True :print(f"row in csv_reader_old : {row}")
 
         if "N/A" in row: # conditions to omit a line from the old file
             skip = True
@@ -302,7 +308,9 @@ with open('anime_data_old.csv', 'r', newline='') as csv_old:
             watched = str(row).split(',')[-4][2:-1]
             season = str(row).split(',')[-1][2:-2]
 
-            if "N/A" in row: # conditions to omit a line from the new file
+            if debug == True:print(f"row in csv_reader_new : {row}")
+
+            if "N/A" in (str(row).split(',')[-7])[2:-1]: # conditions to omit a line from the new file
                 skip = True
             if season.split('-')[0] == current_season:
                 skip == False
