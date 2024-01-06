@@ -261,7 +261,7 @@ with open('anime_data_old.csv', 'r', newline='') as csv_old:
 
         if debug == True :print(f"row in csv_reader_old : {row}")
 
-        if "N/A" in row: # conditions to omit a line from the old file
+        if "N/A" in (str(row).split(',')[-7])[2:-1]: # conditions to omit a line from the old file
             skip = True
             
         if season.split('-')[0] == current_season:
