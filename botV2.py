@@ -132,7 +132,7 @@ async def scrape(ctx):
     '''
     print(str(ctx.author) + " used $scrape")
     await ctx.send("Performing backflip for episode information, please wait...")
-    subprocess.run(['python', 'LinkGenv3.py'])
+    subprocess.run(['python', 'LinkGenv4.py'])
     await ctx.send("Backflip complete.")
 
 @bot.command()
