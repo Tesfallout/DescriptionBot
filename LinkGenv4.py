@@ -2,7 +2,6 @@ import csv
 import datetime
 import os
 import re
-#import requests
 import shutil
 import time
 import subprocess
@@ -14,7 +13,7 @@ from bs4 import BeautifulSoup
 from selenium import webdriver
 
 
-debug = False
+debug = True
 
 def get_anime_season():
     now = datetime.datetime.now()
@@ -59,7 +58,7 @@ def get_html_content(url):
     
     command = [chrome_path, "--window-size=" + window_size, "--window-position=" + window_position, url]
     subprocess.Popen(command)
-    time.sleep(1.75)
+    time.sleep(3)
     pyautogui.moveTo(150, 300)
     pyautogui.rightClick()
     pyautogui.press('up')
@@ -184,8 +183,6 @@ except PermissionError:
 #### Get Current Season ####
 
 if debug == True:print(baseUrl)
-
-baseUrl="https://aniwave.to/filter?keyword=&country%5B%5D=120822&season%5B%5D=spring&year%5B%5D=2024&type%5B%5D=tv&sort=recently_updated"
 
 show_info_table = []
 html_content = get_html_content(baseUrl)
@@ -367,11 +364,12 @@ with open('anime_data_old.csv', 'r', newline='') as csv_old:
             if debug == True :print("Combine 02")
             if not new_info[0][x] in old_info[0]:   # if the title is not in old_info
                 if debug == True :print("Combine 03")
+                if debug == True :print(str(new_info[0][x]) +","+ str(new_info[1][x]) +","+ str(new_info[2][x]) +","+ str(new_info[3][x]) +","+ str(new_info[4][x]) +","+ str(new_info[5][x]) +","+ str(new_info[6][x]))
                 output_list.append(str(new_info[0][x]) +","+ str(new_info[1][x]) +","+ str(new_info[2][x]) +","+ str(new_info[3][x]) +","+ str(new_info[4][x]) +","+ str(new_info[5][x]) +","+ str(new_info[6][x]))
 
         if debug == True :
             print("Combine 04")
-            print(str(new_info[0]))
+            print(str(new_info[0][x]))
         for x in range(len(old_info[0])):           # for each title in old
             if debug == True :
                 print("Combine 05")
