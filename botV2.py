@@ -10,8 +10,7 @@ import random
 import requests
 import re
 import subprocess
-from datetime import date
-from datetime import timedelta
+import datetime
 from dotenv import load_dotenv
 from discord.ext import commands
 from requests import get
@@ -63,9 +62,21 @@ async def update(ctx):
     '''
     : updates the description
     '''
+
+    #get when last scrape occurred
+    scrape_time = os.path.getmtime('anime_data.csv')
+    scrape_datetime = datetime.datetime.fromtimestamp(scrape_time)
+    scrapetime = scrape_datetime.strftime('%m-%d-%Y %H:%M')
+    print(f"Last modified time: {scrapetime}")
+
+
+    
     print(str(ctx.author) + " used $update")
     ctx = bot.get_channel(1130364127727063171) #the-description-beta
     await ctx.purge() #add limit=100 to only delete 100 messages
+
+    await ctx.send("**Last scraped: " + str(scrapetime) + " Central Time**\n")
+    
     message=""
     
     with open("descriptionV2.txt") as f:
