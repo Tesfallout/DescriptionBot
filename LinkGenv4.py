@@ -9,11 +9,10 @@ import pyautogui
 import pyperclip
 
 from bs4 import BeautifulSoup
-
+from PIL import Image
 from selenium import webdriver
 
-
-debug = True
+debug = False
 
 def get_anime_season():
     now = datetime.datetime.now()
@@ -49,7 +48,16 @@ def get_last_season(season, year):
 
     return last_season, last_season_year
 
+def get_pixel_color(x, y):
+    screenshot = pyautogui.screenshot()
+    pixel_color = screenshot.getpixel((x, y))
+    return pixel_color
+
 def get_html_content(url):
+
+    x = 150
+    y = 300
+    pageLoaded = False
 
     chrome_path = r'C:\Program Files\Google\Chrome\Application\chrome.exe'
 
@@ -58,8 +66,17 @@ def get_html_content(url):
     
     command = [chrome_path, "--window-size=" + window_size, "--window-position=" + window_position, url]
     subprocess.Popen(command)
-    time.sleep(3)
-    pyautogui.moveTo(150, 300)
+
+    while pageLoaded == False :
+        time.sleep(0.25)
+        color = get_pixel_color(x, y)
+        print(color)
+        if str(color) == "(14, 14, 14)" :
+            print("color match")
+            pageLoaded = True
+
+    time.sleep(0.25)
+    pyautogui.moveTo(x, y)
     pyautogui.rightClick()
     pyautogui.press('up')
     pyautogui.press('up')
@@ -72,7 +89,6 @@ def get_html_content(url):
     
     #print(response)
     return response
-
 
 def extract_show_info(html_content,season,year):
     temp_info_table = []
@@ -376,13 +392,15 @@ with open('anime_data_old.csv', 'r', newline='') as csv_old:
                 print(str(old_info[0][x]))
 
             if not old_info[0][x] in new_info[0]:   # if the title is not in new_info
-                if debug == True :print("Combine 06")
-                if "-E" in str(old_info[2][x]):
-                    if debug == True :print("Combine 07")
-                    output_list.append(str(old_info[0][x]) +","+ str(old_info[1][x]) +","+ str(old_info[2][x]) +","+ str(old_info[3][x]) +","+ str(old_info[4][x]) +","+ str(old_info[5][x]) +","+ str(old_info[6][x]))
-                else:
-                    if debug == True :print("Combine 08")
-                    output_list.append(str(old_info[0][x]) +","+ str(old_info[1][x]) +","+ str(old_info[2][x]) +"-E,"+ str(old_info[3][x]) +","+ str(old_info[4][x]) +","+ str(old_info[5][x]) +","+ str(old_info[6][x]))
+                output_list.append(str(old_info[0][x]) +","+ str(old_info[1][x]) +","+ str(old_info[2][x]) +","+ str(old_info[3][x]) +","+ str(old_info[4][x]) +","+ str(old_info[5][x]) +","+ str(old_info[6][x]))
+                #The line above needs to be deleted if this section is uncommented
+                #if debug == True :print("Combine 06")
+                #if "-E" in str(old_info[2][x]):
+                    #if debug == True :print("Combine 07")
+                    #output_list.append(str(old_info[0][x]) +","+ str(old_info[1][x]) +","+ str(old_info[2][x]) +","+ str(old_info[3][x]) +","+ str(old_info[4][x]) +","+ str(old_info[5][x]) +","+ str(old_info[6][x]))
+                #else:
+                    #if debug == True :print("Combine 08")
+                    #output_list.append(str(old_info[0][x]) +","+ str(old_info[1][x]) +","+ str(old_info[2][x]) +"-E,"+ str(old_info[3][x]) +","+ str(old_info[4][x]) +","+ str(old_info[5][x]) +","+ str(old_info[6][x]))
 
         for x in range(len(old_info[0])):           # if the titles are in both files
             if debug == True :print("Combine 09")
