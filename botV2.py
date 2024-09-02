@@ -75,7 +75,7 @@ async def update(ctx):
     ctx = bot.get_channel(1130364127727063171) #the-description-beta
     await ctx.purge() #add limit=100 to only delete 100 messages
 
-    await ctx.send("**Last scraped: " + str(scrapetime) + " Central Time**\n")
+    await ctx.send("**Last Scraped: " + str(scrapetime) + " Central Time**\n")
     
     message=""
     
@@ -143,7 +143,7 @@ async def scrape(ctx):
     '''
     print(str(ctx.author) + " used $scrape")
     await ctx.send("Performing backflip for episode information, please wait...")
-    subprocess.run(['python', 'LinkGenv4.py'])
+    subprocess.run(['python', 'LinkGenv5.py'])
     await ctx.send("Backflip complete.")
 
 @bot.command()
@@ -181,14 +181,14 @@ async def watch(ctx, *args):
                 
     if cancel == False:
 
-        title = [] #0
-        aired = [] #1
-        airing = [] #2
-        watched = [] #3
-        comment = [] #4
-        url = [] #5
-        season = [] #6
-        info = [title, aired, airing, watched, comment, url, season]
+        title = []      #0
+        aired = []      #1
+        watched = []    #2
+        tagline = []    #3
+        url = []        #4
+        season = []     #5
+        entryType = []  #6
+        info = [title, aired, watched, tagline, url, season, entryType]
 
         output_list = []
 
@@ -196,13 +196,13 @@ async def watch(ctx, *args):
             csv_reader = csv.reader(csv_file)
 
             for row in csv_reader:
-                title.append((str(row).split(',')[-7])[2:-1].replace("Ã—","x"))#title
-                aired.append(str(row).split(',')[-6][2:-1])#aired
-                airing.append(str(row).split(',')[-5][2:-1])#airing
-                watched.append(str(row).split(',')[-4][2:-1])#watched
-                comment.append(str(row).split(',')[-3][2:-1])#comment
-                url.append(str(row).split(',')[-2][2:-1])#url
-                season.append(str(row).split(',')[-1][2:-2])#season
+                title.append(str(row).split(',')[0][2:-1])     #title
+                aired.append(str(row).split(',')[1][2:-1])     #aired
+                watched.append(str(row).split(',')[2][2:-1])   #watched
+                tagline.append(str(row).split(',')[3][2:-1])   #tagline
+                url.append(str(row).split(',')[4][2:-1])       #url
+                season.append(str(row).split(',')[5][2:-1])    #season
+                entryType.append(str(row).split(',')[6][2:-2]) #airing
 
 
             ###Handle Watch Function
@@ -211,6 +211,7 @@ async def watch(ctx, *args):
                 print("debug 0")
                 print(input_title)
                 print(input_watched)
+                print(title)
                 index = title.index(input_title)
                 print("debug 1")
                 watched[index] = input_watched
