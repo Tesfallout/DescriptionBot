@@ -10,6 +10,7 @@ from bs4 import BeautifulSoup
 
 def responseCode(url):
     # Replace 'http://example.com' with the URL you want to check
+    #print(url)
 
     try:
         response = requests.get(url)
@@ -73,7 +74,7 @@ def get_latest_ep(hrefs, titles, latestEp) :
                         ep = int(row[1])
                             
             while code != 404 :
-                url = "https://ww8.gogoanimes.org/watch/" + str(hrefs[x]) + "-episode-"+str(ep)
+                url = "https://anitaku.pe/" + str(hrefs[x]) + "-episode-"+str(ep)
                 code = responseCode(url)
                 if code != 404 :
                     ep += 1
@@ -81,6 +82,10 @@ def get_latest_ep(hrefs, titles, latestEp) :
                     ep -= 1
                 else :
                     ep = 1
+                    url = "https://anitaku.pe/" + str(hrefs[x]) + "-episode-"+str(ep)
+                    code = responseCode(url)
+                    if code == 404 :
+                        ep = 0
             
         #if not dropped :
             #print(str(titles[x]) + " : " + str(ep))
@@ -88,7 +93,7 @@ def get_latest_ep(hrefs, titles, latestEp) :
     
 
 def seasonUrl(season, year):
-    url = 'https://ww8.gogoanimes.org/sub-category/' + str(season) + " " + str(year) + " anime"
+    url = 'https://anitaku.pe/sub-category/' + str(season) + "-" + str(year) + "-anime"
     return url
 
 def scrapeSeason(url):
@@ -138,6 +143,8 @@ def scrapeSeason(url):
                                 title = title.replace("\"","")
                                 title = title.replace("é","e")
                                 title = title.replace("Ã—","x")
+                                title = title.replace("♡","")
+                                title = title.replace("â™¡","")
                                 #print(title)
                                 titles.append(title)
 
@@ -168,7 +175,7 @@ print(fileStatus)
 ### Handle File Statuses
 
 if fileStatus == 1000 : #No Files Present
-    with open('anime_data.csv','w') as file:
+    with open('anime_data.csv','w',encoding='utf-8') as file:
         pass
     fileStatus += 1000
 
@@ -353,7 +360,7 @@ if Continue :
     for x in range(len(last_season_titles)) :
         output_list.append(str(last_season_titles[x]) + "," + str(last_season_latestEp[x]) + "," + str(last_season_watchedEp[x]) + "," + str(last_season_tagline[x]) + "," + str(last_season_hrefs[x]) + "," + str(last_season)+"-"+str(last_season_year) + "," + last_season_entryType[x])
         
-    with open('anime_data.csv', 'w', newline='') as file:
+    with open('anime_data.csv', 'w', newline='',encoding='utf-8') as file:
         csv_writer = csv.writer(file, delimiter=',')
         output_list.sort(key=lambda x: x.lower())
         for row in output_list:
