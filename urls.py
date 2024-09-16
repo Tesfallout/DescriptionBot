@@ -23,4 +23,4 @@ with open('anime_data.csv', 'r', newline='') as csv_file:
             if watched[x].isdigit() :
                 print("\n" + title[x] + ": " + tagline[x])
                 for i in range(int(aired[x])-int(watched[x])):
-                    print("<https://ww8.gogoanimes.org/watch/" + url[x] + "-episode-" + str(i+1+int(watched[x])) + ">")
+                    print("<https://anitaku.pe/" + url[x] + "-episode-" + str(i+1+int(watched[x])) + ">")
