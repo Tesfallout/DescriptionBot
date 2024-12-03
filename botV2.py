@@ -1,5 +1,5 @@
 # bot.py
-# Version 2.0
+# Version 2.1
 
 import aiohttp
 import asyncio
@@ -12,8 +12,14 @@ import re
 import subprocess
 import datetime
 from dotenv import load_dotenv
+from discord import Intents
 from discord.ext import commands
 from requests import get
+
+intents = Intents.default()
+intents.messages = True
+intents.message_content = True
+intents.members = False
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
@@ -21,7 +27,7 @@ CHATGPT_API_KEY = os.getenv('CHATGPT_API_KEY')
 CHATGPT_API_URL = 'https://api.openai.com/v1/chat/completions'
 
 
-bot = commands.Bot(command_prefix='$')
+bot = commands.Bot(command_prefix='$',intents=intents)
 
 admins = ["Tesfallout#3687","Oceansevan#4977"]
 
