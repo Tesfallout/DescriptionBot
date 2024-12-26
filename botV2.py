@@ -149,7 +149,7 @@ async def scrape(ctx):
     '''
     print(str(ctx.author) + " used $scrape")
     await ctx.send("Performing backflip for episode information, please wait...")
-    subprocess.run(['python', 'LinkGenv5.py'])
+    subprocess.run(['python', 'LinkGenv6.py'])
     await ctx.send("Backflip complete.")
 
 @bot.command()
@@ -187,14 +187,13 @@ async def watch(ctx, *args):
                 
     if cancel == False:
 
-        title = []      #0
-        aired = []      #1
+        url = []        #0
+        title = []      #1
         watched = []    #2
         tagline = []    #3
-        url = []        #4
-        season = []     #5
-        entryType = []  #6
-        info = [title, aired, watched, tagline, url, season, entryType]
+        
+        
+        info = [url, title, watched, tagline]
 
         output_list = []
 
@@ -202,14 +201,10 @@ async def watch(ctx, *args):
             csv_reader = csv.reader(csv_file)
 
             for row in csv_reader:
-                title.append(str(row).split(',')[0][2:-1])     #title
-                aired.append(str(row).split(',')[1][2:-1])     #aired
-                watched.append(str(row).split(',')[2][2:-1])   #watched
-                tagline.append(str(row).split(',')[3][2:-1])   #tagline
-                url.append(str(row).split(',')[4][2:-1])       #url
-                season.append(str(row).split(',')[5][2:-1])    #season
-                entryType.append(str(row).split(',')[6][2:-2]) #airing
-
+                url.append(row[0].strip())       # URL
+                title.append(row[1].strip())     # Title
+                watched.append(row[2].strip())   # Watched
+                tagline.append(row[3].strip())   # Tagline
 
             ###Handle Watch Function
             index = -1
@@ -226,12 +221,12 @@ async def watch(ctx, *args):
                 print("error with index")
             
             for x in range(len(title)): #for each item
-                output_list.append(str(info[0][x]) +","+ str(info[1][x]) +","+ str(info[2][x]) +","+ str(info[3][x]) +","+ str(info[4][x]) +","+ str(info[5][x]) +","+ str(info[6][x]))
+                output_list.append(str(info[0][x]) +","+ str(info[1][x]) +","+ str(info[2][x]) +","+ str(info[3][x]))
 
             rows = []
             with open('anime_data.csv', 'w', newline='') as file:
                 csv_writer = csv.writer(file, delimiter=',')
-                output_list.sort(key=lambda x: x.lower())
+                output_list.sort(key=lambda x: x.split(',')[1].lower())
                 for row in output_list:
                     rows = row.split(',')
                     csv_writer.writerow(rows)
